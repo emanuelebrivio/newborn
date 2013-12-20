@@ -1,0 +1,28 @@
+@import url("http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700");
+.open-sans,
+.pure-g [class *='pure-u'],
+html,
+body,
+.pure-form input[type='text'],
+.pure-form input[type='password'],
+.pure-form input[type='email'],
+.pure-form input[type='url'],
+.pure-form input[type='date'],
+.pure-form input[type='month'],
+.pure-form input[type='time'],
+.pure-form input[type='datetime'],
+.pure-form input[type='datetime-local'],
+.pure-form input[type='week'],
+.pure-form input[type='number'],
+.pure-form input[type='search'],
+.pure-form input[type='tel'],
+.pure-form input[type='color'],
+.pure-form select,
+.pure-form textarea {
+  font-family: 'Open Sans', sans-serif;
+}
+html,
+body {
+  width: 100%;
+  height: 100%;
+}
