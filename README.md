@@ -1,7 +1,5 @@
 ## Newborn ##
 
-=======
-
 Jade and Stylus basic template for fast starting projects.
 
 **Technologies**
