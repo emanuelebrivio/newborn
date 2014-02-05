@@ -16,7 +16,6 @@
 **More**
 - Smoothscroll.js [lightweight inline scroller]
 - Swipe.js [touch optimized slider]
-- 
 
 ---
 
