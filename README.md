@@ -2,8 +2,6 @@
 
 ### Basic template for fast starting projects ###
 
-based on Jade and Stylus
-
 ---
 
 **Technologies**
@@ -18,3 +16,8 @@ based on Jade and Stylus
 **More**
 - Smoothscroll.js [lightweight inline scroller]
 - Swipe.js [touch optimized slider]
+- 
+
+---
+
+Copyright © 2014 - Emanuele Brivio - [emanuele@brivio.me](mailto:emanuele@brivio.me)
