@@ -9,7 +9,8 @@ _accent = #2ECC71
 .open-sans
   font-family 'Open Sans', sans-serif
 
-.pure-g [class *='pure-u']
+.pure-g [class *='pure-u'],
+.pure-g-r [class*="pure-u"]
   @extends .open-sans
 
 html,
@@ -21,7 +22,8 @@ body
 .pure-form
   input[type='text'], input[type='password'], input[type='email'], input[type='url'], input[type='date'], input[type='month'], input[type='time'], input[type='datetime'], input[type='datetime-local'], input[type='week'], input[type='number'], input[type='search'], input[type='tel'], input[type='color'], select, textarea
     @extends .open-sans
-
+  button
+    @extends .open-sans
 
 /* @CUSTOM CSS for fast start */
 .container
@@ -51,6 +53,13 @@ h4, h5, h6
   height 80px
 .spacer-100
   height 100px
+
+.text-left
+  text-align left
+.text-center
+  text-align center
+.text-right
+  text-align right
 
 a.link
   text-decoration none
