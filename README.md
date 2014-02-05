@@ -12,5 +12,5 @@ Jade and Stylus basic template for fast starting projects.
 - Google Font Open Sans
 
 **More**
-- Smoothscroll.js
-- Swipe.js
+- Smoothscroll.js [lightweight inline scroller]
+- Swipe.js [touch optimized slider]
