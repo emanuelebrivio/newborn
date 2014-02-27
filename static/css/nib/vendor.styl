@@ -1,3 +1,4 @@
+use('../nodes/vendor-helpers.js')
 @import 'config'
 
 /*
@@ -25,23 +26,22 @@ is-width(val)
  */
 
 vendor(prop, args, only = null, ignore = null, vendor-property = true)
-  //need_normalize = !vendor-property or prop in ('transition' 'transition-property' 'border-image' 'border-image-slice')
+  need_normalize = !vendor-property or prop in ('transition' 'transition-property' 'border-image' 'border-image-slice')
   for prefix in vendor-prefixes
     unless (only and !(prefix in only)) or (ignore and prefix in ignore)
       if official == prefix
-        //
-        //if need_normalize
-        //  {prop}: normalize(prop,('%s' % args))
-        //else
-        {prop}: args
+        if need_normalize
+          {prop}: normalize(prop,('%s' % args))
+        else
+          {prop}: args
       else
         newprop = prop
         newprop = '-' + prefix + '-' + prop if vendor-property
 
-        //if need_normalize
-        //  {newprop}: normalize(prop,('%s' % args),prefix)
-        //else
-        {newprop}: args
+        if need_normalize
+          {newprop}: normalize(prop,('%s' % args),prefix)
+        else
+          {newprop}: args
 /*
  * Vendorize the given value.
  */
