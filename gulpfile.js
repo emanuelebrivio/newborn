@@ -1,18 +1,48 @@
 /*jshint node:true, eqnull:true, laxcomma:true, undef:true, indent:2, camelcase:false, unused:true */
 'use strict';
 
+//  -- requirements --
 var gulp = require('gulp');
 var jade = require('gulp-jade');
 var stylus = require('gulp-stylus');
 var nib = require('nib');
 var rimraf = require('gulp-rimraf');
 var connect = require('gulp-connect');
+var uglify = require('gulp-uglify');
+
+
+//  -- paths for everything we need! --
+var config = {
+  sources: {
+    'jade': [
+      ['template/*.jade', '!template/layout.jade', 'template/**/*.jade'],
+      'template/**/*.jade'
+    ],
+    'stylus': ['template/static/css/*.styl'], 
+    'images': ['template/static/img/**/*'] ,
+    'javascripts': ['template/static/js/**/*'],
+    'fonts': ['template/static/font/**/*']
+  },
+  outputs: {
+    'base': 'output',
+    'css': 'output/static/css',
+    'img': 'output/static/img',
+    'js': 'output/static/js',
+    'font': 'output/static/font'
+  }
+};
 
 
 //  -- cleaning output dir --
 gulp.task('clean', function () {
-  gulp
-    .src('./output/**/*')
+  return gulp
+    .src(
+      config.outputs.font,
+      config.outputs.js,
+      config.outputs.img,
+      config.outputs.css,
+      config.outputs
+    )
     .pipe(
       rimraf({
         read: false
@@ -23,15 +53,15 @@ gulp.task('clean', function () {
 
 //  -- compiling jade files --
 gulp.task('templates', function () {
-  gulp
-    .src('./template/*.jade')
+  return gulp
+    .src(config.sources.jade[0], {path: './'})
     .pipe(
       jade({
       'pretty': false
       })
     )
     .pipe(
-      gulp.dest('./output')
+      gulp.dest(config.outputs.base)
     )
     .pipe(
       connect.reload()
@@ -41,7 +71,8 @@ gulp.task('templates', function () {
 
 //  -- compiling stylus files --
 gulp.task('styles', function () {
-  gulp.src('./template/static/css/*.styl')
+  return gulp
+    .src(config.sources.stylus, {path: './'})
     .pipe(
       stylus({
         use: nib(),
@@ -49,7 +80,7 @@ gulp.task('styles', function () {
       })
     )
     .pipe(
-      gulp.dest('./output/static/css')
+      gulp.dest(config.outputs.css)
     )
     .pipe(
       connect.reload()
@@ -59,10 +90,26 @@ gulp.task('styles', function () {
 
 //  -- move images --
 gulp.task('images', function () {
-  gulp
-    .src('./template/static/img/**/*')
+  return gulp
+    .src(config.sources.images, {path: './'})
     .pipe(
-      gulp.dest('./output/static/img')
+      gulp.dest(config.outputs.img)
+    )
+    .pipe(
+      connect.reload()
+    );
+});
+
+
+//  -- move js --
+gulp.task('javascripts', function () {
+  return gulp
+    .src(config.sources.javascripts, {path: './'})
+    .pipe(
+      uglify()
+    )
+    .pipe(
+      gulp.dest(config.outputs.js)
     )
     .pipe(
       connect.reload()
@@ -72,10 +119,10 @@ gulp.task('images', function () {
 
 //  -- move fonts --
 gulp.task('fonts', function () {
-  gulp
-    .src('./template/static/font/**/*')
+  return gulp
+    .src(config.sources.fonts, {path: './'})
     .pipe(
-      gulp.dest('./output/static/font')
+      gulp.dest(config.outputs.font)
     )
     .pipe(
       connect.reload()
@@ -86,26 +133,42 @@ gulp.task('fonts', function () {
 //  -- server --
 gulp.task('connect', function () {
   connect.server({
-    root: ['./output'],
+    root: ['output'],
     port: process.env.PORT || 1337,
     livereload: true
   });
 });
 
 
-//  -- watch --
+//  -- watch file changes --
 gulp.task('watch', function () {
   gulp
     .watch(
-      ['./template/**/*.jade'], 
+      [config.sources.jade[1]], 
       ['templates']
     );
   gulp
     .watch(
-      ['./template/static/css/**/*.styl'], 
+      [config.sources.stylus], 
       ['styles']
+    );
+  gulp
+    .watch(
+      [config.sources.images], 
+      ['images']
+    );
+  gulp
+    .watch(
+      [config.sources.javascripts], 
+      ['javascripts']
+    );
+  gulp
+    .watch(
+      [config.sources.fonts], 
+      ['fonts']
     );
 });
 
+
 //  -- magic! --
-gulp.task('default', ['clean', 'templates', 'styles', 'images', 'fonts', 'connect', 'watch']);
+gulp.task('default', ['clean', 'templates', 'styles', 'images', 'javascripts', 'fonts', 'connect', 'watch']);
