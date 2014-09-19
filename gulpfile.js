@@ -9,6 +9,7 @@ var nib = require('nib');
 var rimraf = require('gulp-rimraf');
 var connect = require('gulp-connect');
 var uglify = require('gulp-uglify');
+var gutil = require('gulp-util');
 
 
 //  -- paths for everything we need! --
@@ -60,6 +61,10 @@ gulp.task('templates', function () {
       'pretty': false
       })
     )
+      .on('error', function (err) {
+        gutil.log('\n === jade error!! ===\n', gutil.colors.red(err));
+        this.emit('end');
+      })
     .pipe(
       gulp.dest(config.outputs.base)
     )
@@ -79,6 +84,10 @@ gulp.task('styles', function () {
         compress: true
       })
     )
+      .on('error', function (err) {
+        gutil.log('\n === stylus error!! ===\n', gutil.colors.cyan(err));
+        this.emit('end');
+      })
     .pipe(
       gulp.dest(config.outputs.css)
     )
@@ -108,6 +117,10 @@ gulp.task('javascripts', function () {
     .pipe(
       uglify()
     )
+      .on('error', function (err) {
+        gutil.log('\n === js error!! ===\n', gutil.colors.yellow(err));
+        this.emit('end');
+      })
     .pipe(
       gulp.dest(config.outputs.js)
     )
