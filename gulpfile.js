@@ -10,9 +10,10 @@ var del = require('del');
 var webserver = require('gulp-webserver');
 var uglify = require('gulp-uglify');
 var gutil = require('gulp-util');
-
+var fs = require('fs');
 
 //  -- paths for everything we need! --
+var portID;
 var config = {
   sources: {
     'jade': [
@@ -32,6 +33,27 @@ var config = {
     'font': 'output/static/font'
   }
 };
+
+
+gulp.task('makeport', function () {
+  var path = './.port';
+  if (fs.existsSync(path)) {
+    portID = fs.readFileSync(path, 'utf-8');
+  } else {
+    portID = (parseInt(Math.round(Math.random() * 1000000), 10) % 100) * 10 + 3000;
+    fs.writeFile(path, portID);
+  }
+  gutil.log(gutil.colors.cyan('PORT is set to ' + portID));
+});
+
+
+gulp.task('readport', function () {
+  var path = './.port';
+  if (fs.existsSync(path)) {
+    portID = fs.readFileSync(path, 'utf-8');
+    gutil.log(gutil.colors.cyan('PORT is set to ' + portID));
+  }
+});
 
 
 //  -- cleaning output dir --
@@ -140,7 +162,8 @@ gulp.task('server', function() {
       fallback: 'output/index.html',
       livereload: true,
       open: false,
-      port: process.env.PORT || 1337
+      port: process.env.PORT || portID || 3000,
+      host: process.env.HOSTNAME || '0.0.0.0'
     }));
 });
 
@@ -176,4 +199,4 @@ gulp.task('watch', function () {
 
 
 //  -- magic! --
-gulp.task('default', ['clean', 'templates', 'styles', 'images', 'javascripts', 'fonts', 'server', 'watch']);
+gulp.task('default', ['readport', 'clean', 'templates', 'styles', 'images', 'javascripts', 'fonts', 'server', 'watch']);
