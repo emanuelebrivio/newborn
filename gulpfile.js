@@ -6,10 +6,11 @@ var gulp = require('gulp');
 var jade = require('gulp-jade');
 var stylus = require('gulp-stylus');
 var nib = require('nib');
-var rimraf = require('gulp-rimraf');
+var del = require('del');
 var connect = require('gulp-connect');
 var uglify = require('gulp-uglify');
 var gutil = require('gulp-util');
+var deploy = require('gulp-gh-pages');
 
 
 //  -- paths for everything we need! --
@@ -35,20 +36,8 @@ var config = {
 
 
 //  -- cleaning output dir --
-gulp.task('clean', function () {
-  return gulp
-    .src(
-      config.outputs.font,
-      config.outputs.js,
-      config.outputs.img,
-      config.outputs.css,
-      config.outputs
-    )
-    .pipe(
-      rimraf({
-        read: false
-      })
-    );
+gulp.task('clean', function(cb) {
+  del([config.outputs.base], cb);
 });
 
 
@@ -185,3 +174,21 @@ gulp.task('watch', function () {
 
 //  -- magic! --
 gulp.task('default', ['clean', 'templates', 'styles', 'images', 'javascripts', 'fonts', 'connect', 'watch']);
+
+
+//  -- deploy to gh-pages branch --
+/*
+  If you haven't yet a gh-pages branch:
+
+  . git checkout --orphan gh-pages
+  . git rm -rf .
+  . touch README.md
+  . git add README.md
+  . git commit -m "Setup gh-pages branch"
+  . git push --set-upstream origin gh-pages
+  . git checkout master
+*/
+gulp.task('deploy', function () {
+  return gulp.src('./output/**/*')
+    .pipe(deploy());
+});
