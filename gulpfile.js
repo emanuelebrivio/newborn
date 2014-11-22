@@ -57,31 +57,14 @@ gulp.task('readport', function () {
 
 
 //  -- cleaning output dir --
-gulp.task('clean', function () {
-  return gulp
-    .src(
-      config.outputs.font,
-      config.outputs.js,
-      config.outputs.img,
-      config.outputs.css,
-      config.outputs
-    )
-    .pipe(
-      rimraf({
-        read: false
-      })
-    );
-});
-
-gulp.task('clean', function (cb) {
-  return
-    del([config.outputs.base + '/**/*'], cb);
+gulp.task('clean', function(cb) {
+  del([config.outputs.base], cb);
 });
 
 
 //  -- compiling jade files --
 gulp.task('templates', function () {
-  return gulp
+  gulp
     .src(config.sources.jade[0], {path: './'})
     .pipe(
       jade({
@@ -199,4 +182,4 @@ gulp.task('watch', function () {
 
 
 //  -- magic! --
-gulp.task('default', ['readport', 'clean', 'templates', 'styles', 'images', 'javascripts', 'fonts', 'server', 'watch']);
+gulp.task('default', ['readport', 'templates', 'styles', 'images', 'javascripts', 'fonts', 'server', 'watch']);
