@@ -1,7 +1,7 @@
 /*jshint node:true, eqnull:true, laxcomma:true, undef:true, indent:2, camelcase:false, unused:true */
 'use strict';
 
-//  -- requirements --
+//  -- packages required --
 var gulp = require('gulp');
 var jade = require('gulp-jade');
 var stylus = require('gulp-stylus');
@@ -13,167 +13,136 @@ var gutil = require('gulp-util');
 var deploy = require('gulp-gh-pages');
 
 
-//  -- paths for everything we need! --
-var config = {
-  sources: {
-    'jade': [
-      ['template/*.jade', '!template/layout.jade', 'template/**/*.jade'],
-      'template/**/*.jade'
-    ],
-    'stylus': ['template/static/css/*.styl'], 
-    'images': ['template/static/img/**/*'] ,
-    'javascripts': ['template/static/js/**/*'],
-    'fonts': ['template/static/font/**/*']
-  },
-  outputs: {
-    'base': 'output',
-    'css': 'output/static/css',
-    'img': 'output/static/img',
-    'js': 'output/static/js',
-    'font': 'output/static/font'
-  }
-};
 
-
-//  -- cleaning output dir --
-gulp.task('clean', function(cb) {
-  del([config.outputs.base], cb);
+//  -- cleaning all items in output --
+gulp.task('clean-all', function (cb) {
+  del(['output'], cb);
+});
+//  -- cleaning compiled templates --
+gulp.task('clean-templates', function (cb) {
+  del(['output/*.html', 'output/**/*.html'], cb);
+});
+//  -- cleaning compiled styles --
+gulp.task('clean-styles', function (cb) {
+  del(['output/static/css'], cb);
+});
+//  -- cleaning minified javascripts --
+gulp.task('clean-js', function (cb) {
+  del(['output/static/js'], cb);
+});
+//  -- cleaning all images --
+gulp.task('clean-images', function (cb) {
+  del(['output/static/img'], cb);
+});
+//  -- cleaning all fonts --
+gulp.task('clean-fonts', function (cb) {
+  del(['output/static/font'], cb);
 });
 
 
 //  -- compiling jade files --
-gulp.task('templates', function () {
+gulp.task('jade2html', ['clean-templates'], function () {
   return gulp
-    .src(config.sources.jade[0], {path: './'})
-    .pipe(
-      jade({
-      'pretty': false
-      })
-    )
+    .src(['template/*.jade', '!template/layout.jade', 'template/**/*.jade'], {path: './'})
+    .pipe( jade({ 'pretty': false }) )
       .on('error', function (err) {
         gutil.log('\n === jade error!! ===\n', gutil.colors.red(err));
         this.emit('end');
       })
-    .pipe(
-      gulp.dest(config.outputs.base)
-    )
-    .pipe(
-      connect.reload()
-    );
+    .pipe( gulp.dest('output') )
+      .on('error', function (err) {
+        gutil.log('\n === jade error!! ===\n', gutil.colors.red(err));
+        this.emit('end');
+      })
+    .pipe(connect.reload());
 });
 
 
 //  -- compiling stylus files --
-gulp.task('styles', function () {
+gulp.task('styl2css', function () {
   return gulp
-    .src(config.sources.stylus, {path: './'})
-    .pipe(
-      stylus({
-        use: nib(),
-        compress: true
-      })
-    )
+    .src(['template/static/css/*.styl'], {path: './'})
+    .pipe( stylus({ use: nib(), compress: true }) )
       .on('error', function (err) {
         gutil.log('\n === stylus error!! ===\n', gutil.colors.cyan(err));
         this.emit('end');
       })
-    .pipe(
-      gulp.dest(config.outputs.css)
-    )
-    .pipe(
-      connect.reload()
-    );
+    .pipe( gulp.dest('output/static/css') )
+      .on('error', function (err) {
+        gutil.log('\n === stylus error!! ===\n', gutil.colors.cyan(err));
+        this.emit('end');
+      })
+    .pipe(connect.reload());
 });
 
 
 //  -- move images --
-gulp.task('images', function () {
+gulp.task('move-images', function () {
   return gulp
-    .src(config.sources.images, {path: './'})
-    .pipe(
-      gulp.dest(config.outputs.img)
-    )
-    .pipe(
-      connect.reload()
-    );
+    .src(['template/static/img/**/*'], {path: './'})
+    .pipe( gulp.dest('output/static/img') )
+      .on('error', function (err) {
+        gutil.log('\n === images error!!! ===\n', gutil.colors.green(err));
+        this.emit('end');
+      })
+    .pipe(connect.reload());
 });
 
 
 //  -- move js --
-gulp.task('javascripts', function () {
+gulp.task('uglify-js', function (cb) {
   return gulp
-    .src(config.sources.javascripts, {path: './'})
-    .pipe(
-      uglify()
-    )
+    .src(['template/static/js/**/*'], {path: './'})
+    .pipe( uglify() )
       .on('error', function (err) {
         gutil.log('\n === js error!! ===\n', gutil.colors.yellow(err));
         this.emit('end');
       })
-    .pipe(
-      gulp.dest(config.outputs.js)
-    )
-    .pipe(
-      connect.reload()
-    );
+    .pipe( gulp.dest('output/static/js') )
+      .on('error', function (err) {
+        gutil.log('\n === js error!!! ===\n', gutil.colors.yellow(err));
+        this.emit('end');
+      })
+    .pipe(connect.reload());
 });
 
 
 //  -- move fonts --
-gulp.task('fonts', function () {
+gulp.task('move-fonts', function () {
   return gulp
-    .src(config.sources.fonts, {path: './'})
-    .pipe(
-      gulp.dest(config.outputs.font)
-    )
-    .pipe(
-      connect.reload()
-    );
+    .src(['template/static/font/**/*'], {path: './'})
+    .pipe( gulp.dest('output/static/font') )
+      .on('error', function (err) {
+        gutil.log('\n === fonts error!!! ===\n', gutil.colors.purple(err));
+        this.emit('end');
+      })
+    .pipe(connect.reload());
 });
 
 
 //  -- server --
-gulp.task('connect', function () {
+gulp.task('serve-files', function () {
   connect.server({
     root: ['output'],
     port: process.env.PORT || 1337,
+    host: process.env.HOST || '0.0.0.0' || 'localhost',
     livereload: true
   });
 });
 
 
 //  -- watch file changes --
-gulp.task('watch', function () {
-  gulp
-    .watch(
-      [config.sources.jade[1]], 
-      ['templates']
-    );
-  gulp
-    .watch(
-      [config.sources.stylus], 
-      ['styles']
-    );
-  gulp
-    .watch(
-      [config.sources.images], 
-      ['images']
-    );
-  gulp
-    .watch(
-      [config.sources.javascripts], 
-      ['javascripts']
-    );
-  gulp
-    .watch(
-      [config.sources.fonts], 
-      ['fonts']
-    );
+gulp.task('watch-files', function () {
+  gulp.watch(['template/*.jade', '!template/layout.jade', 'template/**/*.jade'], ['jade2html']);
+  gulp.watch(['template/static/css/*.styl'], ['styl2css']);
+  gulp.watch(['template/static/img/**/*'], ['move-images']);
+  gulp.watch(['template/static/js/**/*'], ['uglify-js']);
+  gulp.watch(['template/static/font/**/*'], ['move-fonts']);
 });
 
 
 //  -- magic! --
-gulp.task('default', ['clean', 'templates', 'styles', 'images', 'javascripts', 'fonts', 'connect', 'watch']);
+gulp.task('default', ['jade2html', 'styl2css', 'move-images', 'uglify-js', 'move-fonts', 'serve-files', 'watch-files']);
 
 
 //  -- deploy to gh-pages branch --
