@@ -41,7 +41,7 @@ gulp.task('clean-fonts', function (cb) {
 
 
 //  -- compiling jade files --
-gulp.task('jade2html', ['clean-templates'], function () {
+gulp.task('jade2html', function () {
   return gulp
     .src(['template/*.jade', '!template/layout.jade', 'template/**/*.jade'], {path: './'})
     .pipe( jade({ 'pretty': false }) )
