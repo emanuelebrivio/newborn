@@ -83,6 +83,9 @@ gulp.task('styles', function () {
       })
     .pipe(
       gulp.dest(__dirname + '/output/static/css')
+    )
+    .pipe(
+      connect.reload()
     );
 });
 
@@ -105,6 +108,9 @@ gulp.task('javascripts', function () {
       })
     .pipe( 
       gulp.dest(__dirname + '/output/static/js')
+    )
+    .pipe(
+      connect.reload()
     );
 });
 
@@ -124,7 +130,10 @@ gulp.task('fonts', function () {
       .on('error', function (err) {
         gutil.log('\n === fonts error!!! ===\n', gutil.colors.purple(err));
         this.emit('end');
-      });
+      })
+    .pipe(
+      connect.reload()
+    );
 });
 
 
@@ -143,7 +152,10 @@ gulp.task('images', function () {
       .on('error', function (err) {
         gutil.log('\n === images error!!! ===\n', gutil.colors.green(err));
         this.emit('end');
-      });
+      })
+    .pipe(
+      connect.reload()
+    );
 });
 
 
