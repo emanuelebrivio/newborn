@@ -2,4 +2,4 @@
 
 1. `npm install --global gulp`
 2. `npm install`
-3. run with `gulp`
+3. `gulp`
